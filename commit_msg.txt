@@ -1,7 +1,0 @@
-docs(auth): add comprehensive authentication lifecycle & security guide
-
-- Add dedicated Authentication & Account Management section to README and SKILL
-- Document `voyager-relay login`, `login --manual`, `whoami`, `status`, and `logout`
-- Enforce strict Agent Security Mandate: agents must never request raw tokens in chat
-- Update CLAUDE.md, CODEX.md, KIMI.md, and AGENTS.md with auth verification guidelines
-- Update scripts/hybrid_runner.py to discover voyager-relay and notion-ai interchangeably
