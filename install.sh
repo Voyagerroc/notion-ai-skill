@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Universal Notion AI Skill Installer for Linux / macOS
+# VoyagerRelay Universal Agent Skill Installer for Linux / macOS
 # Configures Antigravity, Claude Code, and Codex environments
 
 set -e
 
 echo "=================================================="
-echo "   Notion AI Universal Agent Skill Installer      "
+echo "     VoyagerRelay — Universal Agent Skill         "
 echo "=================================================="
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
