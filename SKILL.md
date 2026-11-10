@@ -72,12 +72,15 @@ voyager-relay logout
 ## 🛠️ CLI Quick Reference
 
 ```powershell
-# Default query
-notion-ai "Explain async rate limiting"
+# Default query (Auto router - uses Standard Credits with higher allowances)
+voyager-relay "Explain async rate limiting"
+voyager-relay -m auto "Explain async rate limiting"
 
 # Select model: sonnet, opus, gpt, gemini, deepseek, kimi
-notion-ai -m sonnet "Optimize this algorithm"
-notion-ai -m kimi "Analyze edge cases"
+# (Note: If specific model rate limit is reached, it automatically falls back to Auto)
+voyager-relay -m sonnet "Optimize this algorithm"
+voyager-relay -m opus "Complex architectural analysis"
+voyager-relay -m kimi "Analyze edge cases"
 
 # Feed files & context
 notion-ai -f main.py "Find potential race conditions"

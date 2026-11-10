@@ -32,6 +32,16 @@ The repository provides agent instructions, installers, and a Python prompt-pack
 
 The bridge uses Notion’s web interface through an unofficial integration. Authentication or service behavior can change, and use is subject to applicable service terms.
 
+### 💡 Credit Pools & Auto-Fallback Protection
+
+Notion AI operates a dual-pool credit system:
+* **Standard Credits (Auto Mode):** 1,500+ credits/month per member (with workspace credit overflow pooling). When set to `auto`, Notion dynamically routes tasks using lightweight models for simple questions and heavy models for complex code, drawing strictly from Standard Credits.
+* **Select Credits (Manual Selection):** Typically capped at 500 credits/month per member (with rolling 6-hour throttles). Explicitly forcing high-end models like Claude Opus or Sonnet consumes this restricted pool. Once exhausted, the Notion web interface grays out model selection and restricts users to Auto mode.
+
+**VoyagerRelay's Built-in Protection:**
+1. **Default to `auto`:** Prompts sent without `-m` default to `auto`, preserving your precious Select Credits.
+2. **Zero-Downtime Auto-Fallback:** If you specify `-m opus` or `-m sonnet` and hit a model rate limit (HTTP 429), quota restriction, or model unavailability, VoyagerRelay automatically catches the error, displays an informative recovery notice, and seamlessly re-routes the task to `auto` mode without interrupting your workflow.
+
 ## Architecture
 
 ```text

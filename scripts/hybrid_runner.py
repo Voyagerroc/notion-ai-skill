@@ -13,7 +13,7 @@ import sys
 import tempfile
 
 
-def run_hybrid_task(task: str, files: list = None, model: str = "sonnet", think: bool = False) -> str:
+def run_hybrid_task(task: str, files: list = None, model: str = "auto", think: bool = False) -> str:
     files_context = ""
     if files:
         for fpath in files:
@@ -63,7 +63,7 @@ def main():
     parser = argparse.ArgumentParser(description="Universal Hybrid Agent Runner")
     parser.add_argument("task", help="Instruction or query for Notion AI")
     parser.add_argument("-f", "--files", nargs="*", help="Local files to feed into context")
-    parser.add_argument("-m", "--model", default="sonnet", help="Model shortcut (sonnet, opus, gpt, gemini, kimi, deepseek)")
+    parser.add_argument("-m", "--model", default="auto", help="Model shortcut (auto [default], sonnet, opus, gpt, gemini, kimi, deepseek)")
     parser.add_argument("-t", "--think", action="store_true", help="Display reasoning traces")
     parser.add_argument("-o", "--output", help="Optional path to save output file")
 
