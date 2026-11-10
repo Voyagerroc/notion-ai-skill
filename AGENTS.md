@@ -41,3 +41,7 @@ This document specifies the integration protocol for autonomous AI coding agents
 2. **Context Passing:** Always pass file dependencies using `-f <file>` or package them into a temporary file with `-P <file>` to avoid shell argument truncations.
 3. **AST Validation:** Verify that code modifications compile and pass project unit tests before declaring task completion.
 4. **Rollback Safety:** If a patch introduces regressions, run `notion-ai --rollback <target_file>`.
+5. **Authentication & Privacy Protection:**
+   - Run `voyager-relay whoami` to check connection state.
+   - If not logged in, prompt user to run `voyager-relay login` (or `voyager-relay login --manual`).
+   - **CRITICAL:** Never ask user to paste raw tokens, passwords, or session cookies into the conversation. Tokens must stay in the local secure environment.

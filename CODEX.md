@@ -4,6 +4,15 @@ This guide defines how **OpenAI Codex**, **Cursor**, **Windsurf**, and **Aider**
 
 ---
 
+## 🔐 Authentication & Security
+
+Before launching the server or invoking models:
+1. Verify credentials: `voyager-relay whoami`
+2. If unauthenticated, instruct user: `voyager-relay login`
+3. Never prompt for or ingest `token_v2` in model completions or conversation context.
+
+---
+
 ## 🚀 Two Integration Modes
 
 ### Mode 1: Local OpenAI-Compatible Server (Recommended for Cursor & Aider)

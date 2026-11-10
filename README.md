@@ -78,6 +78,64 @@ This is a **workflow**, not a guarantee of autonomous execution: the capabilitie
 | **Moonshot Kimi** | Agent workflow and the `-m kimi` model alias | [KIMI.md](KIMI.md) |
 | **Other local agents** | Follow the shared instructions and invoke the CLI | [AGENTS.md](AGENTS.md) |
 
+## 🔐 Authentication & Account Management
+
+VoyagerRelay supports multi-account management and dedicated authentication commands directly from the CLI.
+
+### Connect Your Notion Account
+
+Each user connects their own Notion account. You do not need a paid third-party API key—your Notion AI subscription covers inference:
+
+```bash
+# Automated Browser Login (Launches local Chrome/Edge, logs in, captures session via CDP)
+voyager-relay login
+
+# Manual Login (Masked input: safely paste token_v2 without exposing it on screen)
+voyager-relay login --manual
+```
+
+> [!TIP]
+> Both `voyager-relay` and `notion-ai` CLI aliases support the same subcommands interchangeably.
+
+### Check Current Session and Workspace
+
+Verify which Notion profile and workspace are active before sending prompts:
+
+```bash
+voyager-relay whoami
+# or
+voyager-relay status
+```
+
+Output preview:
+```text
+[VoyagerRelay Auth Durumu]
+✓ Aktif Profil : default
+  Kullanıcı     : Erol Taşcı (tascierol24@gmail.com)
+  Workspace ID  : a8f418f1-c7bd-4411-9127-0bde7d7c8667
+  Toplam Profil : 1
+  Durum         : Bağlı ve aktif (Tüm sorgular $0 maliyetle akar)
+```
+
+### Log Out and Clear Local Credentials
+
+To safely remove saved tokens, session history, and environment entries from your local machine:
+
+```bash
+voyager-relay logout
+```
+
+> [!NOTE]
+> `voyager-relay logout` clears credentials from your local machine (`accounts.json`, `.env`, and session cache). To invalidate the session on Notion's servers, sign out through Notion's web settings.
+
+### Agent Privacy & Security Mandates
+
+- **Zero Third-Party Relays:** All prompts, file contexts, and tokens communicate directly with Notion's web infrastructure over HTTPS.
+- **Agent Chat Isolation:** AI coding agents (Antigravity, Claude Code, Codex, Kimi) are strictly instructed to **NEVER** ask users to paste `token_v2`, passwords, or session cookies into chat conversations.
+- **Masked Terminal Input:** During manual login (`--manual`), inputs are masked using `getpass` to prevent credentials from being exposed in screenshots, terminal history, or recordings.
+
+---
+
 ## ⚡ 1-Minute Quickstart
 
 The skill installation takes about a minute **once the prerequisites are ready**.

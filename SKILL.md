@@ -42,6 +42,33 @@ flowchart TD
 
 ---
 
+## 🔐 Authentication & Session Lifecycle
+
+Before dispatching tasks to Notion AI, ensure the local environment is authenticated:
+
+```powershell
+# Check current connection & workspace
+voyager-relay whoami
+
+# Automated browser login (Chrome / Edge with CDP)
+voyager-relay login
+
+# Manual token paste (masked terminal prompt)
+voyager-relay login --manual
+
+# Disconnect & remove local credentials
+voyager-relay logout
+```
+
+### 🛡️ Agent Security Rules (Mandatory)
+
+1. **Never ask the user to paste `token_v2`, passwords, or cookies into the conversation window.** Always direct the user to run `voyager-relay login` in their local terminal.
+2. **Never log, commit, or print credential files** (`accounts.json`, `.env`).
+3. If unauthenticated, gracefully catch the error and prompt the user with the command: `voyager-relay login`.
+4. Ensure all token data remains strictly local and communicates solely with `https://www.notion.so/api/v3` over HTTPS.
+
+---
+
 ## 🛠️ CLI Quick Reference
 
 ```powershell

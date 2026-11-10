@@ -4,6 +4,15 @@ Notion AI natively incorporates Moonshot AI's **Kimi** model family. This skill 
 
 ---
 
+## 🔐 Authentication & Security
+
+Ensure the Notion session is active before routing inference:
+* Check status: `voyager-relay whoami`
+* Sign in: `voyager-relay login` (or `voyager-relay login --manual`)
+* Agent Rule: Never request raw session cookies or passwords in conversation.
+
+---
+
 ## 🌟 Available Kimi Models
 
 | Model Shortcut | Target Model Identifier | Description |

@@ -14,6 +14,15 @@ When performing large-scale code synthesis, architectural planning, file refacto
 
 ---
 
+## 🔐 Authentication & Session Lifecycle
+
+Before dispatching tasks to Notion AI:
+1. Verify connection status: `voyager-relay whoami`
+2. If unauthenticated, tell the user to run `voyager-relay login` in their local terminal.
+3. **NEVER ask the user to paste `token_v2` or passwords into the Claude Code conversation.**
+
+---
+
 ## 💻 Claude Code Commands
 
 Use the `Bash` tool to run the following patterns:

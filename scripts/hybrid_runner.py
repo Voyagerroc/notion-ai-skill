@@ -37,7 +37,7 @@ def run_hybrid_task(task: str, files: list = None, model: str = "sonnet", think:
         tf.write(full_prompt)
         prompt_path = tf.name
 
-    executable = shutil.which("notion-ai") or "notion-ai"
+    executable = shutil.which("voyager-relay") or shutil.which("notion-ai") or "voyager-relay"
     if sys.platform == "win32":
         cmd = ["cmd.exe", "/c", executable, "-m", model, "-P", prompt_path]
     else:
