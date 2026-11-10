@@ -1,0 +1,54 @@
+name: Feature request
+description: Suggest an enhancement or new agent integration for VoyagerRelay
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve VoyagerRelay!
+        ⚠️ **Security Reminder:** Never include tokens (`token_v2`), cookies, passwords, private code, or personal data.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem are you trying to solve, or what workflow would you like to improve?
+      placeholder: "As a developer using ..., I want to ..., so that ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or improvement in detail.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Did you consider alternative approaches?
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: List observable checks or test outcomes.
+      placeholder: |
+        - [ ] Working implementation / guide added
+        - [ ] Tested on Windows / macOS / Linux
+        - [ ] Unit tests passing
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to submit a Pull Request for this feature.

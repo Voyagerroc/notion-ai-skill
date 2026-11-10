@@ -1,0 +1,53 @@
+name: Bug report
+description: Report a reproducible issue or unexpected behavior
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting!
+        ⚠️ **Security Reminder:** Never include tokens (`token_v2`), cookies, passwords, private files, or personal data.
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS version, Python version, agent (Antigravity, Claude Code, Codex, Kimi), and client version.
+      placeholder: "Windows 11 / macOS Sonoma; Python 3.11; voyager-relay v1.0; Antigravity"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Run `voyager-relay ...`
+        2. Execute ...
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized Terminal Logs
+      description: Please remove any private paths, emails, or credentials before pasting.
+      render: text
+    validations:
+      required: false

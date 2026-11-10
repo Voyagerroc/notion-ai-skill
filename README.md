@@ -1,12 +1,27 @@
-# VoyagerRelay
+# 🚀 VoyagerRelay
 
 **Give your local agent hands. Give it a reasoning brain.**
 
 VoyagerRelay is an open-source hybrid orchestration skill by **Voyagerroc Technologies**. It connects local coding agents to Notion AI through the [`notion2api`](https://github.com/Voyagerroc/notion2api) bridge: the local agent gathers context and executes work; Notion AI helps reason about the task and generate code.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org)
 [![Multi-Agent Spec](https://img.shields.io/badge/Spec-Multi--Agent-purple)](AGENTS.md)
-[![Zero-Cost LLM](https://img.shields.io/badge/LLM-No%20Separate%20API%20Key-green)](#cost-and-availability)
+[![Zero Marginal Cost](https://img.shields.io/badge/LLM%20Billing-%240%20Marginal%20Tokens-success)](#cost-and-availability)
+[![Good First Issues](https://img.shields.io/github/issues/Voyagerroc/notion-ai-skill/good%20first%20issue?color=7057ff&label=Good%20First%20Issues)](https://github.com/Voyagerroc/notion-ai-skill/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Voyagerroc/notion-ai-skill/pulls)
+
+```text
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  $ voyager-relay -m opus "Design concurrent job queue with backoff"         │
+│                                                                             │
+│  [Notion AI (Claude Opus 4.6)] >                                            │
+│  ✓ Analyzing requirements & bounded concurrency...                          │
+│  ✓ Synthesizing type-safe Python implementation...                          │
+│                                                                             │
+│  ✓ 24 unit tests passed | $0 Marginal API Tokens Billed                     │
+╰─────────────────────────────────────────────────────────────────────────────╯
+```
 
 > [!NOTE]
 > This repository is currently named [`notion-ai-skill`](https://github.com/Voyagerroc/notion-ai-skill). **VoyagerRelay** is the orchestration workflow described here; `notion-ai` is the CLI provided by the separate `notion2api` project.
@@ -298,9 +313,41 @@ Chat endpoint: http://127.0.0.1:8765/v1/chat/completions
 | A patch or rollback fails | Inspect the CLI output, verify the target and backup, and use version control to recover if needed. |
 | A client cannot connect | Confirm the bridge server is running on `127.0.0.1:8765` and the client uses the `/v1` base URL. |
 
-## Contributing
+## 🤝 Contributing & Good First Issues
 
-Contributions are welcome—from documentation and agent integrations to bug reports and workflow improvements.
+Contributions from developers of all skill levels are warmly welcome! Whether fixing a typo, expanding documentation, adding editor integrations, or improving security, every PR makes VoyagerRelay better.
+
+### 🎯 Featured Open Issues (Ready for Pull Requests!)
+
+We maintain a curated list of issues with clear scopes and acceptance criteria:
+
+| Issue | Title | Difficulty | Target Area |
+|---|---|---|---|
+| [#1](https://github.com/Voyagerroc/notion-ai-skill/issues/1) | `feat(integrations): Add Cline & Roo-Code preset and guide` | ⭐ Good First Issue | Documentation, IDE Agents |
+| [#2](https://github.com/Voyagerroc/notion-ai-skill/issues/2) | `feat(auth): Cross-platform OS Keyring integration` | ⭐⭐⭐ Advanced | Security, System Vaults |
+| [#3](https://github.com/Voyagerroc/notion-ai-skill/issues/3) | `feat(tui): Interactive terminal model selector using rich` | ⭐⭐ Intermediate | CLI, User Experience |
+| [#4](https://github.com/Voyagerroc/notion-ai-skill/issues/4) | `feat(benchmarks): Automated token savings & latency benchmark reporter` | ⭐ Good First Issue | Tooling, Benchmarks |
+| [#5](https://github.com/Voyagerroc/notion-ai-skill/issues/5) | `feat(integrations): Add Neovim (Avante.nvim) & Zed hybrid workflows` | ⭐ Good First Issue | Editor Recipes, Lua |
+
+👉 **[View all active issues or open a new one](https://github.com/Voyagerroc/notion-ai-skill/issues)**
+
+### 🚀 How to Submit a Pull Request
+
+1. **Pick an issue:** Comment on an issue (e.g. *"I'd like to work on this!"*) so others know you're on it.
+2. **Fork & Branch:**
+   ```bash
+   git checkout -b feat/your-feature-name
+   ```
+3. **Make changes & test:**
+   ```bash
+   pytest
+   ```
+4. **Commit & Push:**
+   ```bash
+   git commit -m "feat(integrations): add zed editor guide"
+   git push origin feat/your-feature-name
+   ```
+5. **Open a PR:** Open a Pull Request referencing the issue (e.g., `Closes #1`). We review and merge promptly!
 
 For agent-specific conventions, see [AGENTS.md](AGENTS.md). Never include credentials, session tokens, or private project data in an issue or pull request.
 
