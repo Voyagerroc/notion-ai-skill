@@ -1,57 +1,9 @@
-# CODEX.md - OpenAI Codex & Cursor Integration Guide
+# Codex / compatible-client recipe
 
-This guide defines how **OpenAI Codex**, **Cursor**, **Windsurf**, and **Aider** agents leverage the `notion-ai` local bridge.
+Install notion2api 0.1.0+ and activate its environment. `notion-ai`, `voyager-relay` and `notion-ai-server` are installed console commands; no external wrapper aliases are required.
 
----
+Use `notion-ai -P prompt.txt` only for authorized provider work. Review selected context first and keep credentials out of chat, prompt files and logs. Generated patches require review and actual tests.
 
-## 🔐 Authentication & Security
+For clients supporting a custom OpenAI-compatible endpoint, start `notion-ai-server --host 127.0.0.1 --port 8765`; configure base URL `http://127.0.0.1:8765/v1` and the bridge's configured API key. Do not assume every client supports this mode or disable authentication to make it connect. Client integration and live model access require separate validation.
 
-Before launching the server or invoking models:
-1. Verify credentials: `voyager-relay whoami`
-2. If unauthenticated, instruct user: `voyager-relay login`
-3. Never prompt for or ingest `token_v2` in model completions or conversation context.
-
----
-
-## 🚀 Two Integration Modes
-
-### Mode 1: Local OpenAI-Compatible Server (Recommended for Cursor & Aider)
-The Notion AI bridge includes a high-performance FastAPI server exposing standard OpenAI `/v1/chat/completions` endpoints.
-
-1. **Start the local server:**
-   ```bash
-   notion-ai-server
-   # Or directly:
-   python -m uvicorn app.server:app --port 8765
-   ```
-2. **Configure Codex / Cursor / Aider:**
-   * **OpenAI Base URL:** `http://127.0.0.1:8765/v1`
-   * **API Key:** Any arbitrary string (e.g. `notion`) or your configured `API_KEY`.
-   * **Available Models:**
-     * `claude-sonnet4.6`
-     * `claude-opus4.6`
-     * `gpt-5.5`
-     * `kimi-2.7`
-     * `deepseek-v4pro`
-     * `gemini-3.5flash`
-     * `auto`
-
-### Mode 2: Shell Tool Execution (Codex CLI / Agent Harness)
-Codex agents can invoke the CLI wrapper directly:
-
-```bash
-# Ask GPT-5.5 via Notion AI
-notion-ai -m gpt "Write a concurrent worker pool in Go"
-
-# Ask Claude Sonnet via Notion AI
-notion-ai -m sonnet "Optimize SQL queries in repository"
-
-# Feed files directly
-notion-ai -m gpt -f schema.prisma "Generate seed data script"
-```
-
----
-
-## ⚡ Benefits for Codex Users
-* Eliminates OpenAI token billings for heavy background drafting.
-* Grants instant access to Claude 3.5 Sonnet and Opus directly inside OpenAI-centric tooling.
+Authentication is a local user action through `voyager-relay login`; `--help` is account-free. No model, cost or fallback guarantee is made. See SKILL.md and SECURITY.md.

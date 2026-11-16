@@ -1,358 +1,102 @@
-# 🚀 VoyagerRelay
+# VoyagerRelay skill
 
-**Give your local agent hands. Give it a reasoning brain.**
+An experimental prompt-packaging workflow for local coding agents, using the separate [notion2api bridge](https://github.com/Voyagerroc/notion2api). The local agent selects context, reviews responses and runs checks. This repository supplies skill files, a standard-library installer and a runner; it does not supply model access.
 
-VoyagerRelay is an open-source hybrid orchestration skill by **Voyagerroc Technologies**. It connects local coding agents to Notion AI through the [`notion2api`](https://github.com/Voyagerroc/notion2api) bridge: the local agent gathers context and executes work; Notion AI helps reason about the task and generate code.
+[![Offline skill checks](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml)
+[![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org)
-[![Multi-Agent Spec](https://img.shields.io/badge/Spec-Multi--Agent-purple)](AGENTS.md)
-[![Zero Marginal Cost](https://img.shields.io/badge/LLM%20Billing-%240%20Marginal%20Tokens-success)](#cost-and-availability)
-[![Good First Issues](https://img.shields.io/github/issues/Voyagerroc/notion-ai-skill/good%20first%20issue?color=7057ff&label=Good%20First%20Issues)](https://github.com/Voyagerroc/notion-ai-skill/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Voyagerroc/notion-ai-skill/pulls)
+Illustrative flow below, **not captured model output or a test result**:
 
 ```text
-╭─────────────────────────────────────────────────────────────────────────────╮
-│  $ voyager-relay -m opus "Design concurrent job queue with backoff"         │
-│                                                                             │
-│  [Notion AI (Claude Opus 4.6)] >                                            │
-│  ✓ Analyzing requirements & bounded concurrency...                          │
-│  ✓ Synthesizing type-safe Python implementation...                          │
-│                                                                             │
-│  ✓ 24 unit tests passed | $0 Marginal API Tokens Billed                     │
-╰─────────────────────────────────────────────────────────────────────────────╯
+Selected files + task -> temporary prompt -> installed bridge
+                                           |
+Local review + real tests <- response -----+
 ```
 
-> [!NOTE]
-> This repository is currently named [`notion-ai-skill`](https://github.com/Voyagerroc/notion-ai-skill). **VoyagerRelay** is the orchestration workflow described here; `notion-ai` is the CLI provided by the separate `notion2api` project.
+## Install the bridge first
 
-## Why VoyagerRelay?
+Use Python 3.10+ and Git. The bridge's 0.1.0 preview provides real `notion-ai`, `voyager-relay` and `notion-ai-server` console commands.
 
-Powerful coding workflows often face two constraints:
-
-- **Metered inference can add up.** Large prompts, repeated refactoring, and multi-file analysis can consume substantial API tokens.
-- **Cloud reasoning needs local context.** A cloud model does not automatically see your repository or run commands on your machine. A local agent must collect the relevant context and perform local actions.
-
-VoyagerRelay joins the two:
-
-1. A **local agent** reads selected files and prepares the task.
-2. The **Notion AI bridge** sends the prompt to an available model.
-3. The local agent reviews the response, applies changes, and runs tests.
-
-The repository provides agent instructions, installers, and a Python prompt-packaging runner. The CLI and model connection are supplied by `notion2api`.
-
-### Cost and availability
-
-**“Zero-cost LLM” means no separate metered model-provider API key is required for the intended bridge workflow—not that inference or the overall workflow is guaranteed to be free.** Notion plans, credits, quotas, model availability, and local-agent charges can still apply. Check your account’s current terms and usage before relying on this workflow.
-
-The bridge uses Notion’s web interface through an unofficial integration. Authentication or service behavior can change, and use is subject to applicable service terms.
-
-### 💡 Credit Pools & Auto-Fallback Protection
-
-Notion AI operates a dual-pool credit system:
-* **Standard Credits (Auto Mode):** 1,500+ credits/month per member (with workspace credit overflow pooling). When set to `auto`, Notion dynamically routes tasks using lightweight models for simple questions and heavy models for complex code, drawing strictly from Standard Credits.
-* **Select Credits (Manual Selection):** Typically capped at 500 credits/month per member (with rolling 6-hour throttles). Explicitly forcing high-end models like Claude Opus or Sonnet consumes this restricted pool. Once exhausted, the Notion web interface grays out model selection and restricts users to Auto mode.
-
-**VoyagerRelay's Built-in Protection:**
-1. **Default to `auto`:** Prompts sent without `-m` default to `auto`, preserving your precious Select Credits.
-2. **Zero-Downtime Auto-Fallback:** If you specify `-m opus` or `-m sonnet` and hit a model rate limit (HTTP 429), quota restriction, or model unavailability, VoyagerRelay automatically catches the error, displays an informative recovery notice, and seamlessly re-routes the task to `auto` mode without interrupting your workflow.
-
-## Architecture
-
-```text
-                         Your task
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────┐
-│ LOCAL AGENT — hands and carrier                          │
-│ Antigravity · Claude Code · Codex · Cursor · Kimi       │
-│                                                          │
-│ Read selected files • Package context • Run commands     │
-│ Review and apply changes • Execute tests                 │
-└────────────────────────────┬─────────────────────────────┘
-                             │
-                    Prompt + selected context
-                    notion-ai / prompt file (-P)
-                             │
-                             ▼
-┌────────────────────────────────────────────────────────┐
-│ NOTION AI — reasoning and code-generation brain         │
-│ Sonnet · Opus · GPT · Kimi, where available              │
-│                                                          │
-│ Analyze • Design • Generate • Explain                    │
-└────────────────────────────┬─────────────────────────────┘
-                             │
-                       Response / code
-                             │
-                             ▼
-┌──────────────────────────────────────────────────────────┐
-│ LOCAL AGENT — review and verification                   │
-│ Inspect diff • Apply changes • Run tests • Iterate      │
-└──────────────────────────────────────────────────────────┘
-```
-
-This is a **workflow**, not a guarantee of autonomous execution: the capabilities available depend on the agent, its permissions, the bridge, and your configuration. Review generated code and test results before committing or deploying.
-
-## Supported agents
-
-| Agent | Intended integration | Guide |
-|---|---|---|
-| **Google Antigravity** | Installed skill and local hybrid runner | [SKILL.md](SKILL.md) |
-| **Anthropic Claude Code** | Installed skill and agent instructions | [CLAUDE.md](CLAUDE.md) |
-| **OpenAI Codex / Cursor** | CLI invocation; compatible clients can use the local OpenAI-compatible endpoint | [CODEX.md](CODEX.md) |
-| **Moonshot Kimi** | Agent workflow and the `-m kimi` model alias | [KIMI.md](KIMI.md) |
-| **Other local agents** | Follow the shared instructions and invoke the CLI | [AGENTS.md](AGENTS.md) |
-
-## 🔐 Authentication & Account Management
-
-VoyagerRelay supports multi-account management and dedicated authentication commands directly from the CLI.
-
-### Connect Your Notion Account
-
-Each user connects their own Notion account. You do not need a paid third-party API key—your Notion AI subscription covers inference:
-
-```bash
-# Automated Browser Login (Launches local Chrome/Edge, logs in, captures session via CDP)
-voyager-relay login
-
-# Manual Login (Masked input: safely paste token_v2 without exposing it on screen)
-voyager-relay login --manual
-```
-
-> [!TIP]
-> Both `voyager-relay` and `notion-ai` CLI aliases support the same subcommands interchangeably.
-
-### Check Current Session and Workspace
-
-Verify which Notion profile and workspace are active before sending prompts:
-
-```bash
-voyager-relay whoami
-# or
-voyager-relay status
-```
-
-Output preview:
-```text
-[VoyagerRelay Auth Durumu]
-✓ Aktif Profil : default
-  Kullanıcı     : Erol Taşcı (tascierol24@gmail.com)
-  Workspace ID  : a8f418f1-c7bd-4411-9127-0bde7d7c8667
-  Toplam Profil : 1
-  Durum         : Bağlı ve aktif (Tüm sorgular $0 maliyetle akar)
-```
-
-### Log Out and Clear Local Credentials
-
-To safely remove saved tokens, session history, and environment entries from your local machine:
-
-```bash
-voyager-relay logout
-```
-
-> [!NOTE]
-> `voyager-relay logout` clears credentials from your local machine (`accounts.json`, `.env`, and session cache). To invalidate the session on Notion's servers, sign out through Notion's web settings.
-
-### Agent Privacy & Security Mandates
-
-- **Zero Third-Party Relays:** All prompts, file contexts, and tokens communicate directly with Notion's web infrastructure over HTTPS.
-- **Agent Chat Isolation:** AI coding agents (Antigravity, Claude Code, Codex, Kimi) are strictly instructed to **NEVER** ask users to paste `token_v2`, passwords, or session cookies into chat conversations.
-- **Masked Terminal Input:** During manual login (`--manual`), inputs are masked using `getpass` to prevent credentials from being exposed in screenshots, terminal history, or recordings.
-
----
-
-## ⚡ 1-Minute Quickstart
-
-The skill installation takes about a minute **once the prerequisites are ready**.
-
-### Prerequisites
-
-- Git and Python 3.10+
-- An eligible Notion account with AI access
-- A configured [`notion2api`](https://github.com/Voyagerroc/notion2api) installation
-- A local agent you want to use
-
-Set up the bridge first:
-
-```bash
+```console
 git clone https://github.com/Voyagerroc/notion2api.git
 cd notion2api
-python -m pip install -r requirements.txt
-python login.py
+python -m venv .venv
 ```
 
-Follow the bridge’s setup instructions to make `notion-ai` available on your `PATH`. You can also run `python ask_notion.py` directly from the `notion2api` directory; substitute it for `notion-ai` in the examples below. Return to the directory where you want to clone VoyagerRelay.
+Activate `.venv` with `.venv\Scripts\Activate.ps1` in Windows PowerShell or `source .venv/bin/activate` on Linux/macOS, then:
 
-### Install the skill
-
-**Linux / macOS:**
-
-```bash
-git clone https://github.com/Voyagerroc/notion-ai-skill.git && cd notion-ai-skill && chmod +x install.sh && ./install.sh
+```console
+python -m pip install -e .
+notion-ai --help
+voyager-relay --help
+notion-ai-server --help
 ```
 
-**Windows PowerShell:**
+Commands work from any directory while that environment is activated. For persistent user commands, the bridge also supports `uv tool install --editable .`; ensure the path reported by `uv tool dir --bin` is on PATH. Do not copy or rename command wrappers. `--help` requires no account and does not read credentials. See the bridge's README for state locations and locked development setup.
 
-```powershell
-git clone https://github.com/Voyagerroc/notion-ai-skill.git; Set-Location notion-ai-skill; .\install.ps1
+Only when ready to use the service, run `voyager-relay login` in your **local interactive terminal**, using your own eligible account. Never paste credentials into agent chat. `whoami` reports saved local configuration, not proof of a live session or zero cost.
+
+## Install the skill
+
+Return to your projects directory, clone this repository, then use the portable installer:
+
+```console
+git clone https://github.com/Voyagerroc/notion-ai-skill.git
+cd notion-ai-skill
+python scripts/install_skill.py --dry-run
+python scripts/install_skill.py
 ```
 
-Verify the bridge:
+Equivalent wrappers: `bash install.sh` on Linux/macOS, or `.\install.ps1` in Windows PowerShell. To use an explicit test home: `python scripts/install_skill.py --home ./temporary-home`. The PowerShell wrapper takes `-HomeDirectory <path>` and optional `-PythonExecutable <path>`.
 
-```bash
-notion-ai --list-models
-notion-ai -m sonnet "Explain this project in three sentences."
+The default installer copies `SKILL.md`, all four agent guides and `scripts/hybrid_runner.py` into these **actual** directories:
+
+| Target | Directory |
+| --- | --- |
+| Shared agents / Antigravity | `~/.agents/skills/notion-ai` |
+| Claude Code | `~/.claude/skills/notion-ai` |
+| Codex legacy skill path | `~/.codex/skills/notion-ai` |
+
+Use repeated `--target agents`, `--target claude` or `--target codex` to select clients. Other clients, including Kimi/Cursor, need their guide and manual client configuration; installing files is not verification of client compatibility. Existing named skill files are replaced; unrelated files are preserved. The installer does not install the bridge, register aliases, alter PATH/profiles, log in or inspect credentials.
+
+## Runner
+
+```console
+python scripts/hybrid_runner.py "Review error handling" -f src/service.py -m auto
 ```
 
-## CLI usage
+Strict context validation is the default: missing, unreadable or directory inputs fail before the bridge is invoked. The runner requires an installed bridge on PATH, reads only selected files, limits total UTF-8 context to 4 MiB and passes it in a temporary `-P` prompt file. It uses structured process arguments without a shell and removes the prompt after success, nonzero exit or timeout. On Windows use the bridge's pip-installed console executables; copied `.cmd`/`.bat` wrappers are unsupported. Abrupt process termination can leave temporary files.
 
-The following examples use the `notion-ai` CLI from `notion2api`. Run them from your project directory unless noted otherwise.
+`-o response.txt` saves the returned text; it does not apply or execute code. Review outgoing paths/content and returned changes yourself. The runner has no automatic retry or guarantee of fallback/availability. The configured bridge controls upstream behavior.
 
-### Ask a question
+## Bridge recipes
 
-```bash
-notion-ai "Explain the trade-offs of an event-driven architecture."
-```
-
-### Choose a model
-
-```bash
-notion-ai -m sonnet "Review this design for maintainability."
-notion-ai -m opus "Analyze failure modes in a distributed job queue."
-notion-ai -m kimi "Identify concurrency risks in this pipeline."
-notion-ai -m gpt "Design a bounded worker pool."
-```
-
-### Include local files with `-f`
-
-```bash
-notion-ai -m sonnet \
-  -f src/server.py \
-  -f src/config.py \
-  "Explain the request flow and identify configuration risks."
-```
-
-### Read a prompt from a file with `-P`
-
-For larger instructions, write the prompt to a UTF-8 text file:
-
-```bash
-notion-ai -m opus -P prompt.txt -f src/service.py
-```
-
-`-P` avoids putting the full prompt on the command line, bypassing OS argument length limits.
-
-### Edit a file with `-e`
-
-```bash
-notion-ai -m sonnet -e src/service.py "Add input validation and explicit error handling."
-```
-
-To restore the backup:
-
-```bash
+```console
+notion-ai -P prompt.txt
+notion-ai -m auto -f src/service.py "Review this source"
+notion-ai -e src/service.py "Propose clearer error handling"
 notion-ai --rollback src/service.py
+notion-ai-server --host 127.0.0.1 --port 8765
 ```
 
-### Start the interactive REPL
+The optional local server uses `http://127.0.0.1:8765/v1` for compatible clients. Model names from `notion-ai --list-models` are local mappings, not an account-availability guarantee. Patching syntax checks are not an OS sandbox or proof of correctness. Direct workspace publishing additionally needs the separately configured `ntn` CLI. See [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), [CODEX.md](CODEX.md) and [KIMI.md](KIMI.md).
 
-```bash
-notion-ai
+<a id="cost-and-availability"></a>
+
+## Cost, privacy and support boundary
+
+This is an unofficial Notion web integration. Provider plans, quotas, models, authentication and terms can change. There is no guarantee of free inference, token savings, fixed credit allowances, latency or uninterrupted fallback. Local-agent charges can also apply.
+
+Prompts, selected files and file paths leave your machine through the separately configured bridge. Review them before sending, keep credentials local and use synthetic fixtures in tests. No test in this repository contacts Notion or proves live model access. Read [SECURITY.md](SECURITY.md).
+
+## Verification and contributions
+
+```console
+python -m unittest discover -s tests -v
+python scripts/hybrid_runner.py --help
+python scripts/install_skill.py --version
 ```
 
-Inside the session:
+The offline suite runs a real executable stub bridge, temporary homes, failure/timeout cleanup and wrapper installations. CI exercises Windows PowerShell and Linux Bash separately. Follow [CONTRIBUTING.md](CONTRIBUTING.md) for focused changes and privacy boundaries. Pick an existing issue or propose a concrete improvement; a response/merge time is not guaranteed.
 
-```text
-/model sonnet
-/model opus
-new
-exit
-```
-
-### Hybrid runner
-
-```bash
-python scripts/hybrid_runner.py \
-  "Review this service for error-handling gaps." \
-  -m sonnet \
-  -f src/service.py src/config.py
-```
-
-## Local OpenAI-compatible endpoint
-
-`notion2api` also documents a local server for compatible clients. From the `notion2api` directory:
-
-```bash
-python -m uvicorn app.server:app --host 127.0.0.1 --port 8765
-```
-
-Configure a compatible client with:
-
-```text
-Base URL: http://127.0.0.1:8765/v1
-Chat endpoint: http://127.0.0.1:8765/v1/chat/completions
-```
-
-## Security and responsible use
-
-- **Protect credentials.** Treat Notion session data and bridge configuration as secrets. Never commit them to Git.
-- **Review outgoing context.** Prompts and files passed to the bridge leave your local machine.
-- **Inspect generated changes.** AI-generated code can be incorrect, insecure, or incomplete.
-- **Run your own checks.** Execute relevant tests, linters, and security checks before merging.
-- **Use least privilege.** Grant local agents only the filesystem and command access needed for the task.
-
-## Troubleshooting
-
-| Problem | What to check |
-|---|---|
-| `notion-ai` is not found | Configure the bridge executable on `PATH`, or run `python ask_notion.py` from the `notion2api` directory. |
-| Authentication fails | Revisit `notion2api` setup and login; verify the account has AI access. |
-| A model alias fails | Check `notion-ai --list-models` and your account’s available models. |
-| The installer cannot find files | Run it from a complete repository checkout; the script expects adjacent repository files. |
-| A file is missing from context | Check the path relative to your current directory and confirm you have permission to read it. |
-| A patch or rollback fails | Inspect the CLI output, verify the target and backup, and use version control to recover if needed. |
-| A client cannot connect | Confirm the bridge server is running on `127.0.0.1:8765` and the client uses the `/v1` base URL. |
-
-## 🤝 Contributing & Good First Issues
-
-Contributions from developers of all skill levels are warmly welcome! Whether fixing a typo, expanding documentation, adding editor integrations, or improving security, every PR makes VoyagerRelay better.
-
-### 🎯 Featured Open Issues (Ready for Pull Requests!)
-
-We maintain a curated list of issues with clear scopes and acceptance criteria:
-
-| Issue | Title | Difficulty | Target Area |
-|---|---|---|---|
-| [#1](https://github.com/Voyagerroc/notion-ai-skill/issues/1) | `feat(integrations): Add Cline & Roo-Code preset and guide` | ⭐ Good First Issue | Documentation, IDE Agents |
-| [#2](https://github.com/Voyagerroc/notion-ai-skill/issues/2) | `feat(auth): Cross-platform OS Keyring integration` | ⭐⭐⭐ Advanced | Security, System Vaults |
-| [#3](https://github.com/Voyagerroc/notion-ai-skill/issues/3) | `feat(tui): Interactive terminal model selector using rich` | ⭐⭐ Intermediate | CLI, User Experience |
-| [#4](https://github.com/Voyagerroc/notion-ai-skill/issues/4) | `feat(benchmarks): Automated token savings & latency benchmark reporter` | ⭐ Good First Issue | Tooling, Benchmarks |
-| [#5](https://github.com/Voyagerroc/notion-ai-skill/issues/5) | `feat(integrations): Add Neovim (Avante.nvim) & Zed hybrid workflows` | ⭐ Good First Issue | Editor Recipes, Lua |
-
-👉 **[View all active issues or open a new one](https://github.com/Voyagerroc/notion-ai-skill/issues)**
-
-### 🚀 How to Submit a Pull Request
-
-1. **Pick an issue:** Comment on an issue (e.g. *"I'd like to work on this!"*) so others know you're on it.
-2. **Fork & Branch:**
-   ```bash
-   git checkout -b feat/your-feature-name
-   ```
-3. **Make changes & test:**
-   ```bash
-   pytest
-   ```
-4. **Commit & Push:**
-   ```bash
-   git commit -m "feat(integrations): add zed editor guide"
-   git push origin feat/your-feature-name
-   ```
-5. **Open a PR:** Open a Pull Request referencing the issue (e.g., `Closes #1`). We review and merge promptly!
-
-For agent-specific conventions, see [AGENTS.md](AGENTS.md). Never include credentials, session tokens, or private project data in an issue or pull request.
-
-## License
-
-VoyagerRelay is distributed under the [MIT License](LICENSE).
-
-Built by **Voyagerroc Technologies** and the open-source community.
+Existing [MIT license](LICENSE). Preview version: **0.1.0**.
