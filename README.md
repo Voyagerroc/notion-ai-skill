@@ -1,17 +1,27 @@
 # VoyagerRelay skill
 
-An experimental prompt-packaging workflow for local coding agents, using the separate [notion2api bridge](https://github.com/Voyagerroc/notion2api). The local agent selects context, reviews responses and runs checks. This repository supplies skill files, a standard-library installer and a runner; it does not supply model access.
+Installer and skill files that let a local coding agent package selected context for the separate [notion2api bridge](https://github.com/Voyagerroc/notion2api), an unofficial Notion AI bridge.
+
+**Status:** v0.1.0 pre-release. Unofficial and experimental. It supplies no model access: the bridge and your own eligible account do that. The offline tests pass; none of them contacts Notion.
 
 [![Offline skill checks](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml)
-[![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange.svg?style=flat)](https://github.com/Voyagerroc/notion-ai-skill/releases/tag/v0.1.0)
 
-Illustrative flow below, **not captured model output or a test result**:
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/flow-dark.webp">
+  <img src="docs/assets/flow-light.webp" alt="Four steps: selected files and a task become a temporary prompt, the installed bridge receives it, and its response goes to local review and real tests." width="100%">
+</picture>
 
-```text
-Selected files + task -> temporary prompt -> installed bridge
-                                           |
-Local review + real tests <- response -----+
-```
+Illustrative flow, **not captured model output or a test result**. The local agent selects context, reviews responses and runs checks. This repository supplies skill files, a standard-library installer and a runner.
+
+<a id="cost-and-availability"></a>
+
+## Cost, privacy and support boundary
+
+This is an unofficial Notion web integration. Provider plans, quotas, models, authentication and terms can change. There is no guarantee of free inference, token savings, fixed credit allowances, latency or uninterrupted fallback. Local-agent charges can also apply.
+
+Prompts, selected files and file paths leave your machine through the separately configured bridge. Review them before sending, keep credentials local and use synthetic fixtures in tests. No test in this repository contacts Notion or proves live model access. Read [SECURITY.md](SECURITY.md).
 
 ## Install the bridge first
 
@@ -65,31 +75,15 @@ Use repeated `--target agents`, `--target claude` or `--target codex` to select 
 python scripts/hybrid_runner.py "Review error handling" -f src/service.py -m auto
 ```
 
-Strict context validation is the default: missing, unreadable or directory inputs fail before the bridge is invoked. The runner requires an installed bridge on PATH, reads only selected files, limits total UTF-8 context to 4 MiB and passes it in a temporary `-P` prompt file. It uses structured process arguments without a shell and removes the prompt after success, nonzero exit or timeout. On Windows use the bridge's pip-installed console executables; copied `.cmd`/`.bat` wrappers are unsupported. Abrupt process termination can leave temporary files.
+Missing, unreadable or directory inputs fail before the bridge is invoked. The runner needs an installed bridge on PATH, reads only the files you select, limits total UTF-8 context to 4 MiB and passes it in a temporary `-P` prompt file. It starts the bridge without a shell and removes the prompt after success, a nonzero exit or a timeout; abrupt process termination can leave temporary files. On Windows use the bridge's pip-installed console executables; copied `.cmd`/`.bat` wrappers are unsupported.
 
-`-o response.txt` saves the returned text; it does not apply or execute code. Review outgoing paths/content and returned changes yourself. The runner has no automatic retry or guarantee of fallback/availability. The configured bridge controls upstream behavior.
+`-o response.txt` saves the returned text; it does not apply or execute code. Review outgoing paths and content and any returned changes yourself. The runner has no automatic retry and no guarantee of fallback or availability: the configured bridge controls upstream behavior.
 
-## Bridge recipes
+## Bridge commands
 
-```console
-notion-ai -P prompt.txt
-notion-ai -m auto -f src/service.py "Review this source"
-notion-ai -e src/service.py "Propose clearer error handling"
-notion-ai --rollback src/service.py
-notion-ai-server --host 127.0.0.1 --port 8765
-```
+Editing with `-e`, rollback, the optional local server and the other bridge commands are documented in the [notion2api README](https://github.com/Voyagerroc/notion2api#readme), not repeated here. The agent guides for this skill are [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), [CODEX.md](CODEX.md) and [KIMI.md](KIMI.md).
 
-The optional local server uses `http://127.0.0.1:8765/v1` for compatible clients. Model names from `notion-ai --list-models` are local mappings, not an account-availability guarantee. Patching syntax checks are not an OS sandbox or proof of correctness. Direct workspace publishing additionally needs the separately configured `ntn` CLI. See [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), [CODEX.md](CODEX.md) and [KIMI.md](KIMI.md).
-
-<a id="cost-and-availability"></a>
-
-## Cost, privacy and support boundary
-
-This is an unofficial Notion web integration. Provider plans, quotas, models, authentication and terms can change. There is no guarantee of free inference, token savings, fixed credit allowances, latency or uninterrupted fallback. Local-agent charges can also apply.
-
-Prompts, selected files and file paths leave your machine through the separately configured bridge. Review them before sending, keep credentials local and use synthetic fixtures in tests. No test in this repository contacts Notion or proves live model access. Read [SECURITY.md](SECURITY.md).
-
-## Verification and contributions
+## Verify and contribute
 
 ```console
 python -m unittest discover -s tests -v
@@ -99,4 +93,10 @@ python scripts/install_skill.py --version
 
 The offline suite runs a real executable stub bridge, temporary homes, failure/timeout cleanup and wrapper installations. CI exercises Windows PowerShell and Linux Bash separately. Follow [CONTRIBUTING.md](CONTRIBUTING.md) for focused changes and privacy boundaries. Pick an existing issue or propose a concrete improvement; a response/merge time is not guaranteed.
 
-Existing [MIT license](LICENSE). Preview version: **0.1.0**.
+## License
+
+[MIT](LICENSE).
+
+---
+
+Made by Erol Tasci at [Voyagerroc Technologies](https://voyagerroctechnologies.com/) · [voyagerroctechnologies.com](https://voyagerroctechnologies.com/)
