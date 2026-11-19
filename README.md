@@ -2,11 +2,7 @@
 
 Installer and skill files that let a local coding agent package selected context for the separate [notion2api bridge](https://github.com/Voyagerroc/notion2api), an unofficial Notion AI bridge.
 
-**Status:** v0.1.0 pre-release. Unofficial and experimental. It supplies no model access: the bridge and your own eligible account do that. The offline tests pass; none of them contacts Notion.
-
-[![Offline skill checks](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-[![Status: pre-release](https://img.shields.io/badge/status-pre--release-orange.svg?style=flat)](https://github.com/Voyagerroc/notion-ai-skill/releases/tag/v0.1.0)
+**Status:** v0.1.0 pre-release · MIT · unofficial and experimental. It supplies no model access: the bridge and your own eligible account do that. The offline tests pass; none of them contacts Notion.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/flow-dark.webp">
@@ -14,6 +10,8 @@ Installer and skill files that let a local coding agent package selected context
 </picture>
 
 Illustrative flow, **not captured model output or a test result**. The local agent selects context, reviews responses and runs checks. This repository supplies skill files, a standard-library installer and a runner.
+
+[![CI status](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml)
 
 <a id="cost-and-availability"></a>
 
