@@ -1,5 +1,9 @@
 # VoyagerRelay skill
 
+**A small add-on that lets AI coding assistants (Claude Code, Codex and similar) hand a chosen piece of work to Notion AI through a separate bridge, then bring the answer back for you to review.**
+
+> **Türkçe özet:** Bu depo, yapay zekâ kodlama asistanlarının seçtiğiniz dosyaları ve görevi ayrı kurulan notion2api köprüsü üzerinden Notion AI'a göndermesini sağlayan beceri (skill) dosyalarını ve kurulum aracını içerir. Kendi başına model erişimi sağlamaz; kendi uygun hesabınız ve köprü gereklidir. Proje resmi olmayan, deneysel bir ön sürümdür (v0.1.0).
+
 Installer and skill files that let a local coding agent package selected context for the separate [notion2api bridge](https://github.com/Voyagerroc/notion2api), an unofficial Notion AI bridge.
 
 **Status:** v0.1.0 pre-release · MIT · unofficial and experimental. It supplies no model access: the bridge and your own eligible account do that. The offline tests pass; none of them contacts Notion.
@@ -12,6 +16,19 @@ Installer and skill files that let a local coding agent package selected context
 Illustrative flow, **not captured model output or a test result**. The local agent selects context, reviews responses and runs checks. This repository supplies skill files, a standard-library installer and a runner.
 
 [![CI status](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/Voyagerroc/notion-ai-skill/actions/workflows/ci.yml)
+
+## What it does
+
+- Installs one skill (`notion-ai`) into the skill folders of Claude Code, Codex and shared-agent clients.
+- Provides a runner that packs only the files you select plus a task into a temporary prompt and sends it to the installed bridge.
+- Saves the reply as text for you or your agent to review; it never applies or runs returned code.
+- Cleans up temporary prompt files after success, failure or timeout.
+
+## Who it is for
+
+Developers who already use a local AI coding agent, have their own eligible Notion account, and want to try routing some review or drafting tasks through the [notion2api](https://github.com/Voyagerroc/notion2api) bridge. It is not a hosted service and not useful on its own.
+
+**Tech stack:** Python 3.10+ standard library only, with PowerShell/Bash install wrappers. Layout: `SKILL.md` and agent guides at the root, `scripts/` (installer, runner), `tests/` (offline unittest suite), `.github/workflows/ci.yml`.
 
 <a id="cost-and-availability"></a>
 
